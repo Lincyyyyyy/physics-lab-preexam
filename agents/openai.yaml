@@ -1,3 +1,0 @@
-interface:
-  display_name: "大学物理实验预习自动完成"
-  short_description: "登录并自动完成、提交 172.31.80.14:7101 大学物理实验预习题"
