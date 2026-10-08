@@ -2,7 +2,9 @@
 
 科大奥锐大学物理实验预习系统（`/Student/ReadyForExam/`）的自动答题工具。
 
-> **在线使用 / 分享给别人：** https://c2451134117-cyber.github.io/physics-lab-preexam/
+> **在线使用 / 分享给别人：** https://lincyyyyyy.github.io/physics-lab-preexam/
+
+> 原始版本来自 [c2451134117-cyber/physics-lab-preexam](https://github.com/c2451134117-cyber/physics-lab-preexam)，本仓库在其基础上修复了若干 bug 并补了说明页。
 
 ## 它是怎么工作的
 
