@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>大物预习 · 一键答题</title>
+<meta name="description" content="科大奥锐大学物理实验预习系统 自动答题脚本：油猴脚本 / 书签 / 控制台三种用法。">
+<style>
+  :root{--blue:#0f8bfd;--green:#18a058;--line:#e3e6ea;--bg:#f7f9fb;--text:#1f2329;--muted:#6b7280}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);line-height:1.8;
+       font-family:-apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px 80px}
+  header{background:linear-gradient(135deg,#0f8bfd,#1e5eff);color:#fff;padding:56px 20px 48px;text-align:center}
+  header h1{margin:0 0 10px;font-size:30px;letter-spacing:.5px}
+  header p{margin:0;opacity:.92;font-size:15px}
+  header .badges{margin-top:18px;font-size:13px;opacity:.9}
+  header .badges span{display:inline-block;border:1px solid rgba(255,255,255,.5);
+       border-radius:99px;padding:2px 12px;margin:4px 4px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px 26px;margin:20px 0;
+        box-shadow:0 1px 3px rgba(16,24,40,.04)}
+  h2{font-size:19px;margin:0 0 14px;padding-left:11px;border-left:4px solid var(--blue)}
+  h3{font-size:16px;margin:26px 0 10px}
+  ol,ul{padding-left:22px}
+  li{margin:6px 0}
+  code{background:#eef1f4;padding:2px 6px;border-radius:4px;font-size:13px;
+       font-family:Consolas,Menlo,monospace;word-break:break-all}
+  pre{background:#1f2329;color:#e6edf3;padding:14px 16px;border-radius:8px;overflow:auto;font-size:13px}
+  .btn{display:inline-block;padding:12px 22px;border-radius:9px;color:#fff;text-decoration:none;
+       font-weight:700;font-size:15px;box-shadow:0 2px 8px rgba(16,24,40,.18);margin:5px 8px 5px 0;
+       border:none;cursor:pointer;font-family:inherit}
+  .btn.green{background:var(--green)}
+  .btn.blue{background:var(--blue)}
+  .btn.ghost{background:#fff;color:var(--text);border:1px solid #cbd2d9;box-shadow:none;font-weight:500}
+  .btn:active{opacity:.85}
+  .muted{color:var(--muted);font-size:14px}
+  .note{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;padding:14px 18px;margin:16px 0;font-size:14px}
+  .good{background:#e8f5e9;border:1px solid #a5d6a7;border-radius:10px;padding:14px 18px;margin:16px 0;font-size:14px}
+  .bad{background:#fdecea;border:1px solid #f5c6c0;border-radius:10px;padding:14px 18px;margin:16px 0;font-size:14px}
+  details{border:1px solid var(--line);border-radius:10px;padding:12px 18px;margin:10px 0;background:#fff}
+  details summary{cursor:pointer;font-weight:600;outline:none}
+  details[open] summary{margin-bottom:8px}
+  textarea{width:100%;height:200px;font-family:Consolas,monospace;font-size:12px;
+           margin-top:10px;border:1px solid var(--line);border-radius:8px;padding:10px;display:none}
+  .steps{counter-reset:s;list-style:none;padding:0}
+  .steps li{counter-increment:s;position:relative;padding-left:42px;margin:14px 0}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:2px;width:26px;height:26px;
+       background:var(--blue);color:#fff;border-radius:50%;text-align:center;line-height:26px;
+       font-size:14px;font-weight:700}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 20px;border-top:1px solid var(--line);
+         margin-top:40px}
+  a{color:var(--blue)}
+  @media(max-width:600px){header h1{font-size:23px}.card{padding:18px 16px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>大物预习 · 一键答题</h1>
+  <p>科大奥锐大学物理实验预习系统 · 自动填答案</p>
+  <div class="badges">
+    <span>油猴脚本</span><span>书签版</span><span>控制台版</span><span>免安装可用</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <h2>这是什么</h2>
+    <p>一个浏览器小工具，打开大学物理实验的预习试卷后，它会
+    <b>自动把题目答案填上</b>（可选自动提交）。原理是读取试卷页面自己下发的标准答案，所以不依赖题库、不用联网查答案。</p>
+    <p class="muted">支持单选、多选、判断、下拉填空、简答/填空等常见题型。</p>
+  </div>
+
+  <div class="card">
+    <h2>30 秒上手</h2>
+    <ol class="steps">
+      <li>按 <code>Ctrl + Shift + B</code> 让浏览器显示<b>书签栏</b>。</li>
+      <li>把下面绿色的按钮<b>拖到书签栏</b>上松手。</li>
+      <li>打开预习试卷页面，等题目显示出来，<b>点一下书签栏上的那个按钮</b>。</li>
+    </ol>
+    <p style="text-align:center;margin:24px 0 8px">
+      <a class="btn green" href="javascript:%21function%28%29%7B%22use%20strict%22%3Bvar%20t%3D%22%5B%E5%A4%A7%E7%89%A9%E9%A2%84%E4%B9%A0%5D%22%3Bfunction%20e%28%29%7Bvar%20e%3DArray.prototype.slice.call%28arguments%29%3Bconsole.log.apply%28console%2C%5Bt%5D.concat%28e%29%29%7Dif%28window.__PLP_RUNNING__%29return%20e%28%22%E8%84%9A%E6%9C%AC%E5%B7%B2%E7%BB%8F%E5%9C%A8%E8%BF%90%E8%A1%8C%EF%BC%8C%E6%89%8B%E5%8A%A8%E5%86%8D%E5%A1%AB%E4%B8%80%E6%AC%A1%E2%80%A6%E2%80%A6%22%29%2Cvoid%28window.__PLP__%26%26window.__PLP__.fill%28%29%29%3Bfunction%20n%28t%29%7Breturn%20Array.prototype.slice.call%28t%7C%7C%5B%5D%29%7Dfunction%20r%28t%29%7Bvar%20e%3DString%28t%29.match%28%2F%28%5Cd%2B%29%28%3F%21.%2A%5Cd%29%2F%29%3Breturn%20e%3FparseInt%28e%5B1%5D%2C10%29%3A0%7Dfunction%20i%28t%2Ce%29%7Breturn%20String%28t%29.trim%28%29.toLowerCase%28%29%3D%3D%3DString%28e%29.trim%28%29.toLowerCase%28%29%7Dfunction%20o%28t%2Ce%29%7Bfor%28var%20r%3D%5B%5D%2Ci%3D0%3Bi%3Ct.length%3Bi%2B%2B%29try%7Br%3Dr.concat%28n%28t%5Bi%5D.querySelectorAll%28e%29%29%29%7Dcatch%28t%29%7B%7Dreturn%20r%7Dfunction%20a%28t%2Ce%29%7Bfor%28var%20n%3Do%28t%2C%27input%5Btype%3D%22radio%22%5D%5Bname%3D%22ss%27%2Be.id%2B%27%22%5D%27%29%2Cr%3D0%3Br%3Cn.length%3Br%2B%2B%29if%28i%28n%5Br%5D.value%2Ce.answer%29%29return%20n%5Br%5D.click%28%29%2C1%3Breturn%200%7Dfunction%20u%28t%2Ce%29%7Bfor%28var%20n%3DString%28e.answer%29.match%28%2F%5BA-Za-z%5D%2Fg%29%7C%7C%5B%5D%2Cr%3Do%28t%2C%27input%5Btype%3D%22checkbox%22%5D%27%29%2Ci%3D0%2Ca%3D0%3Ba%3Cn.length%3Ba%2B%2B%29for%28var%20u%3Dn%5Ba%5D.toUpperCase%28%29%2Cc%3D0%3Bc%3Cr.length%3Bc%2B%2B%29%7Bvar%20l%3Dr%5Bc%5D%2Cf%3Dl.id%7C%7C%22%22%2Cs%3Dl.name%7C%7C%22%22%3Bif%28f%3D%3D%3D%22ms%22%2Be.id%2B%22_%22%2Bu%7C%7Cs%3D%3D%3D%22ms%22%2Be.id%2B%22_%22%2Bu%7C%7C-1%21%3D%3Df.indexOf%28e.id%29%26%26f.slice%28-1%29.toUpperCase%28%29%3D%3D%3Du%29%7Bl.checked%7C%7Cl.click%28%29%2Ci%2B%2B%3Bbreak%7D%7Dreturn%20i%7Dfunction%20c%28t%2Ce%29%7Bfor%28var%20n%3D%2F%5E%5Cs%2A%28%E6%AD%A3%E7%A1%AE%7C%E5%AF%B9%7C%E6%98%AF%7Ctrue%7Ct%7C%E2%88%9A%7C1%7Ca%29%5Cs%2A%24%2Fi.test%28e.answer%29%3F%5B%22T%22%2C%22A%22%2C%221%22%2C%22true%22%2C%22%E6%AD%A3%E7%A1%AE%22%2C%22%E5%AF%B9%22%5D%3A%5B%22F%22%2C%22B%22%2C%220%22%2C%22false%22%2C%22%E9%94%99%E8%AF%AF%22%2C%22%E9%94%99%22%5D%2Cr%3Do%28t%2C%27input%5Btype%3D%22radio%22%5D%5Bname%3D%22tf%27%2Be.id%2B%27%22%5D%27%29%2Ca%3D0%3Ba%3Cn.length%3Ba%2B%2B%29for%28var%20u%3D0%3Bu%3Cr.length%3Bu%2B%2B%29if%28i%28r%5Bu%5D.value%2Cn%5Ba%5D%29%29return%20r%5Bu%5D.click%28%29%2C1%3Breturn%200%7Dfunction%20l%28t%2Ce%29%7Breturn%20t.value%3De%2Ct.dispatchEvent%28new%20Event%28%22change%22%2C%7Bbubbles%3A%210%7D%29%29%2C1%7Dfunction%20f%28t%2Ce%29%7Bvar%20r%2Co%3Dn%28t.options%29%3Bfor%28r%3D0%3Br%3Co.length%3Br%2B%2B%29if%28i%28o%5Br%5D.value%2Ce%29%29return%20l%28t%2Co%5Br%5D.value%29%3Bfor%28r%3D0%3Br%3Co.length%3Br%2B%2B%29if%28i%28o%5Br%5D.textContent%2Ce%29%29return%20l%28t%2Co%5Br%5D.value%29%3Breturn%200%7Dfunction%20s%28t%2Ce%29%7Bvar%20n%3Do%28t%2C%27select%5Bid%5E%3D%22bl%27%2Be.id%2B%27_%22%5D%27%29%3Bif%28%21n.length%29return%200%3Bn.sort%28function%28t%2Ce%29%7Breturn%20r%28t.id%29-r%28e.id%29%7D%29%3Bvar%20i%3De.answer.split%28%2F%5B%3B%EF%BC%9B%5D%2F%29%3Bi.length%3Cn.length%26%26%28i%3De.answer.split%28%2F%5B%2C%EF%BC%8C%E3%80%81%5D%2F%29%29%2Ci%3Di.map%28function%28t%29%7Breturn%20t.trim%28%29%7D%29.filter%28Boolean%29%3Bfor%28var%20a%3D0%2Cu%3D0%3Bu%3Cn.length%26%26u%3Ci.length%3Bu%2B%2B%29a%2B%3Df%28n%5Bu%5D%2Ci%5Bu%5D%29%3Breturn%20a%7Dfunction%20d%28t%2Ce%29%7Bfor%28var%20n%3Do%28t%2C%22textarea%22%29%2Cr%3D0%3Br%3Cn.length%3Br%2B%2B%29%7Bif%28-1%21%3D%3D%28%28n%5Br%5D.id%7C%7C%22%22%29%2B%22%20%22%2B%28n%5Br%5D.name%7C%7C%22%22%29%2B%22%20%22%2B%28n%5Br%5D.className%7C%7C%22%22%29%29.indexOf%28e.id%29%29return%20n%5Br%5D.value%3De.answer%2Cn%5Br%5D.dispatchEvent%28new%20Event%28%22input%22%2C%7Bbubbles%3A%210%7D%29%29%2Cn%5Br%5D.dispatchEvent%28new%20Event%28%22change%22%2C%7Bbubbles%3A%210%7D%29%29%2C1%7Dreturn%200%7Dfunction%20p%28%29%7Bvar%20t%3Dfunction%28%29%7Bvar%20t%3D%5Bwindow%5D%3Btry%7Bfor%28var%20e%3D0%3Be%3Cwindow.frames.length%3Be%2B%2B%29t.push%28window.frames%5Be%5D%29%7Dcatch%28t%29%7B%7Dfor%28var%20n%3D0%3Bn%3Ct.length%3Bn%2B%2B%29try%7Bvar%20r%3Dt%5Bn%5D%3Bif%28r%26%26r.view%26%26%22function%22%3D%3Dtypeof%20r.view.NewContentXml%29return%20r.view%7Dcatch%28t%29%7B%7Dreturn%20null%7D%28%29%3Bif%28%21t%29return%20e%28%22%E8%BF%98%E6%B2%A1%E6%89%BE%E5%88%B0%E8%AF%95%E5%8D%B7%E6%95%B0%E6%8D%AE%20window.view%EF%BC%8C%E7%AD%89%E4%B8%80%E4%BC%9A%E5%84%BF%E5%86%8D%E8%AF%95%E2%80%A6%22%29%2C%211%3Bvar%20r%3D%22%22%3Btry%7Br%3Dt.NewContentXml%28%29%7C%7C%22%22%7Dcatch%28t%29%7Breturn%20e%28%22NewContentXml%28%29%20%E6%8A%A5%E9%94%99%EF%BC%9A%22%2Ct%29%2C%211%7Dif%28%21r%29return%20e%28%22%E8%AF%95%E5%8D%B7%20XML%20%E8%BF%98%E6%98%AF%E7%A9%BA%E7%9A%84%EF%BC%8C%E7%AD%89%E4%B8%80%E4%BC%9A%E5%84%BF%E5%86%8D%E8%AF%95%E2%80%A6%22%29%2C%211%3Bvar%20i%3Dfunction%28t%29%7Bvar%20e%3D%28new%20DOMParser%29.parseFromString%28t%2C%22text%2Fxml%22%29%3Bif%28e.querySelector%28%22parsererror%22%29%29return%5B%5D%3Bfor%28var%20r%3Dn%28e.querySelectorAll%28%22Question%22%29%29%2Ci%3D%5B%5D%2Co%3D0%3Bo%3Cr.length%3Bo%2B%2B%29%7Bvar%20a%3Dr%5Bo%5D.querySelector%28%22QuestionID%22%29%2Cu%3Dr%5Bo%5D.querySelector%28%22StdAnswer%22%29%3Ba%26%26u%26%26i.push%28%7Btype%3A%28r%5Bo%5D.getAttribute%28%22Type%22%29%7C%7C%22%22%29.toUpperCase%28%29%2Cid%3A%28a.textContent%7C%7C%22%22%29.trim%28%29%2Canswer%3A%28u.textContent%7C%7C%22%22%29.trim%28%29%7D%29%7Dreturn%20i%7D%28r%29%3Bif%28%21i.length%29return%20e%28%22%E8%AF%95%E5%8D%B7%20XML%20%E9%87%8C%E8%BF%98%E6%B2%A1%E8%A7%A3%E6%9E%90%E5%87%BA%E9%A2%98%E7%9B%AE%EF%BC%8C%E7%AD%89%E4%B8%80%E4%BC%9A%E5%84%BF%E5%86%8D%E8%AF%95%E2%80%A6%22%29%2C%211%3Bfor%28var%20o%3Dfunction%28%29%7Bvar%20t%3D%5B%5D%3Btry%7Bt.push%28document%29%7Dcatch%28t%29%7B%7Dfor%28var%20e%3Ddocument.querySelectorAll%28%22iframe%2C%20frame%22%29%2Cn%3D0%3Bn%3Ce.length%3Bn%2B%2B%29try%7Bvar%20r%3De%5Bn%5D.contentDocument%3Br%26%26-1%3D%3D%3Dt.indexOf%28r%29%26%26t.push%28r%29%7Dcatch%28t%29%7B%7Dreturn%20t%7D%28%29%2Cl%3D%7BSS%3A0%2CMS%3A0%2CTF%3A0%2CBL%3A0%2CSK%3A0%7D%2Cf%3D%5B%5D%2Cp%3D0%3Bp%3Ci.length%3Bp%2B%2B%29%7Bvar%20v%3Di%5Bp%5D%2Ch%3D0%3Bif%28%22SS%22%3D%3D%3Dv.type%29h%3Da%28o%2Cv%29%3Belse%20if%28%22MS%22%3D%3D%3Dv.type%29h%3Du%28o%2Cv%29%3Belse%20if%28%22TF%22%3D%3D%3Dv.type%29h%3Dc%28o%2Cv%29%3Belse%20if%28%22BL%22%3D%3D%3Dv.type%29h%3Ds%28o%2Cv%29%3Belse%7Bif%28%22SK%22%21%3D%3Dv.type%29%7Bf.push%28v.id%2B%22%20%E9%A2%98%E5%9E%8B%20%22%2Bv.type%2B%22%20%E6%9A%82%E4%B8%8D%E6%94%AF%E6%8C%81%22%29%3Bcontinue%7Dh%3Dd%28o%2Cv%29%7Dh%3E0%3Fl%5Bv.type%5D%2B%2B%3Af.push%28v.id%2B%22%EF%BC%88%22%2Bv.type%2B%22%EF%BC%89%E6%B2%A1%E5%8C%B9%E9%85%8D%E4%B8%8A%22%29%7Dreturn%20e%28%22%E5%85%B1%20%22%2Bi.length%2B%22%20%E9%A2%98%EF%BC%8C%E5%A1%AB%E5%85%85%E6%83%85%E5%86%B5%EF%BC%9A%22%2Cl%29%2Cf.length%26%26e%28%22%E8%BF%99%E4%BA%9B%E9%A2%98%E6%B2%A1%E5%A1%AB%E4%B8%8A%EF%BC%9A%22%2Cf%29%2C%210%7Dfunction%20v%28%29%7Bvar%20t%3Dnull%3Btry%7B%22function%22%3D%3Dtypeof%20window.SubmitExam%26%26%28t%3Dwindow.SubmitExam.bind%28window%29%29%7Dcatch%28t%29%7B%7Dfor%28var%20n%3D0%3B%21t%26%26n%3Cwindow.frames.length%3Bn%2B%2B%29try%7Bvar%20r%3Dwindow.frames%5Bn%5D%3B%22function%22%3D%3Dtypeof%20r.SubmitExam%26%26%28t%3Dr.SubmitExam.bind%28r%29%29%7Dcatch%28t%29%7B%7Dif%28t%29%7Be%28%22%E6%AD%A3%E5%9C%A8%E6%8F%90%E4%BA%A4%E2%80%A6%22%29%3Btry%7Bt%28%29%7Dcatch%28t%29%7Be%28%22%E6%8F%90%E4%BA%A4%E5%87%BA%E9%94%99%EF%BC%9A%22%2Ct%29%7D%7Delse%20e%28%22%E6%B2%A1%E6%89%BE%E5%88%B0%20SubmitExam%28%29%EF%BC%8C%E8%AF%B7%E8%87%AA%E5%B7%B1%E7%82%B9%E9%A1%B5%E9%9D%A2%E4%B8%8A%E7%9A%84%E6%8F%90%E4%BA%A4%E6%8C%89%E9%92%AE%E3%80%82%22%29%7Dfunction%20h%28%29%7Be%28%22%E5%B7%B2%E8%B7%B3%E8%BF%87%E8%87%AA%E5%8A%A8%E6%8F%90%E4%BA%A4%EF%BC%88SUBMIT%20%3D%20false%EF%BC%89%EF%BC%8C%E8%AF%B7%E8%87%AA%E5%B7%B1%E7%82%B9%E6%8F%90%E4%BA%A4%E3%80%82%22%29%7Dwindow.__PLP_RUNNING__%3D%210%3Bvar%20w%3D0%2Cm%3Dnull%3Bfunction%20y%28%29%7Breturn%21%21p%28%29%26%26%28m%26%26clearInterval%28m%29%2Ch%28%29%2C%210%29%7Dwindow.__PLP__%3D%7Brun%3Ap%2Cfill%3Ap%2Csubmit%3Av%7D%2Cfunction%28%29%7Bif%28%21document.getElementById%28%22__plp_btn__%22%29%26%26document.body%29%7Bvar%20t%3Ddocument.createElement%28%22button%22%29%3Bt.id%3D%22__plp_btn__%22%2Ct.type%3D%22button%22%2Ct.textContent%3D%22%E4%B8%80%E9%94%AE%E7%AD%94%E9%A2%98%EF%BC%88%E4%B8%8D%E6%8F%90%E4%BA%A4%EF%BC%89%22%2Ct.style.cssText%3D%22position%3Afixed%3Bright%3A24px%3Bbottom%3A24px%3Bz-index%3A99999%3Bpadding%3A10px%2014px%3Bbackground%3A%230f8bfd%3Bcolor%3A%23fff%3Bborder%3Anone%3Bborder-radius%3A6px%3Bcursor%3Apointer%3Bfont-size%3A14px%3Bbox-shadow%3A0%202px%208px%20rgba%280%2C0%2C0%2C.25%29%22%2Ct.addEventListener%28%22click%22%2Cfunction%28%29%7Bp%28%29%26%26h%28%29%7D%29%2Cdocument.body.appendChild%28t%29%7D%7D%28%29%2Cm%3DsetInterval%28function%28%29%7Bw%2B%2B%2C%21y%28%29%26%26w%3E%3D20%26%26%28clearInterval%28m%29%2Ce%28%22%E7%AD%89%E4%BA%86%2020%20%E7%A7%92%E8%BF%98%E6%98%AF%E6%B2%A1%E6%8B%BF%E5%88%B0%E9%A2%98%E7%9B%AE%EF%BC%8C%E5%B7%B2%E5%81%9C%E6%AD%A2%E3%80%82%E8%AF%B7%E7%A1%AE%E8%AE%A4%EF%BC%9A1%29%20%E9%A1%B5%E9%9D%A2%E5%B7%B2%E7%BB%8F%E8%BF%9B%E5%85%A5%E8%AF%95%E5%8D%B7%202%29%20%E6%8D%A2%E4%B8%AA%20frame%20%E5%86%8D%E8%AF%95%E4%B8%80%E6%AC%A1%E3%80%82%22%29%29%7D%2C1e3%29%2Cy%28%29%7D%28%29%3B">✍️ 大物预习（只填答案）</a>
+    </p>
+    <p class="muted" style="text-align:center">第一次请用这个：只填答案，不提交，你还能自己检查一遍。</p>
+    <p style="text-align:center;margin:16px 0 8px">
+      <a class="btn blue" href="javascript:%21function%28%29%7B%22use%20strict%22%3Bvar%20t%3D%22%5B%E5%A4%A7%E7%89%A9%E9%A2%84%E4%B9%A0%5D%22%3Bfunction%20e%28%29%7Bvar%20e%3DArray.prototype.slice.call%28arguments%29%3Bconsole.log.apply%28console%2C%5Bt%5D.concat%28e%29%29%7Dif%28window.__PLP_RUNNING__%29return%20e%28%22%E8%84%9A%E6%9C%AC%E5%B7%B2%E7%BB%8F%E5%9C%A8%E8%BF%90%E8%A1%8C%EF%BC%8C%E6%89%8B%E5%8A%A8%E5%86%8D%E5%A1%AB%E4%B8%80%E6%AC%A1%E2%80%A6%E2%80%A6%22%29%2Cvoid%28window.__PLP__%26%26window.__PLP__.fill%28%29%29%3Bfunction%20n%28t%29%7Breturn%20Array.prototype.slice.call%28t%7C%7C%5B%5D%29%7Dfunction%20r%28t%29%7Bvar%20e%3DString%28t%29.match%28%2F%28%5Cd%2B%29%28%3F%21.%2A%5Cd%29%2F%29%3Breturn%20e%3FparseInt%28e%5B1%5D%2C10%29%3A0%7Dfunction%20i%28t%2Ce%29%7Breturn%20String%28t%29.trim%28%29.toLowerCase%28%29%3D%3D%3DString%28e%29.trim%28%29.toLowerCase%28%29%7Dfunction%20o%28t%2Ce%29%7Bfor%28var%20r%3D%5B%5D%2Ci%3D0%3Bi%3Ct.length%3Bi%2B%2B%29try%7Br%3Dr.concat%28n%28t%5Bi%5D.querySelectorAll%28e%29%29%29%7Dcatch%28t%29%7B%7Dreturn%20r%7Dfunction%20a%28t%2Ce%29%7Bfor%28var%20n%3Do%28t%2C%27input%5Btype%3D%22radio%22%5D%5Bname%3D%22ss%27%2Be.id%2B%27%22%5D%27%29%2Cr%3D0%3Br%3Cn.length%3Br%2B%2B%29if%28i%28n%5Br%5D.value%2Ce.answer%29%29return%20n%5Br%5D.click%28%29%2C1%3Breturn%200%7Dfunction%20u%28t%2Ce%29%7Bfor%28var%20n%3DString%28e.answer%29.match%28%2F%5BA-Za-z%5D%2Fg%29%7C%7C%5B%5D%2Cr%3Do%28t%2C%27input%5Btype%3D%22checkbox%22%5D%27%29%2Ci%3D0%2Ca%3D0%3Ba%3Cn.length%3Ba%2B%2B%29for%28var%20u%3Dn%5Ba%5D.toUpperCase%28%29%2Cc%3D0%3Bc%3Cr.length%3Bc%2B%2B%29%7Bvar%20l%3Dr%5Bc%5D%2Cf%3Dl.id%7C%7C%22%22%2Cs%3Dl.name%7C%7C%22%22%3Bif%28f%3D%3D%3D%22ms%22%2Be.id%2B%22_%22%2Bu%7C%7Cs%3D%3D%3D%22ms%22%2Be.id%2B%22_%22%2Bu%7C%7C-1%21%3D%3Df.indexOf%28e.id%29%26%26f.slice%28-1%29.toUpperCase%28%29%3D%3D%3Du%29%7Bl.checked%7C%7Cl.click%28%29%2Ci%2B%2B%3Bbreak%7D%7Dreturn%20i%7Dfunction%20c%28t%2Ce%29%7Bfor%28var%20n%3D%2F%5E%5Cs%2A%28%E6%AD%A3%E7%A1%AE%7C%E5%AF%B9%7C%E6%98%AF%7Ctrue%7Ct%7C%E2%88%9A%7C1%7Ca%29%5Cs%2A%24%2Fi.test%28e.answer%29%3F%5B%22T%22%2C%22A%22%2C%221%22%2C%22true%22%2C%22%E6%AD%A3%E7%A1%AE%22%2C%22%E5%AF%B9%22%5D%3A%5B%22F%22%2C%22B%22%2C%220%22%2C%22false%22%2C%22%E9%94%99%E8%AF%AF%22%2C%22%E9%94%99%22%5D%2Cr%3Do%28t%2C%27input%5Btype%3D%22radio%22%5D%5Bname%3D%22tf%27%2Be.id%2B%27%22%5D%27%29%2Ca%3D0%3Ba%3Cn.length%3Ba%2B%2B%29for%28var%20u%3D0%3Bu%3Cr.length%3Bu%2B%2B%29if%28i%28r%5Bu%5D.value%2Cn%5Ba%5D%29%29return%20r%5Bu%5D.click%28%29%2C1%3Breturn%200%7Dfunction%20l%28t%2Ce%29%7Breturn%20t.value%3De%2Ct.dispatchEvent%28new%20Event%28%22change%22%2C%7Bbubbles%3A%210%7D%29%29%2C1%7Dfunction%20f%28t%2Ce%29%7Bvar%20r%2Co%3Dn%28t.options%29%3Bfor%28r%3D0%3Br%3Co.length%3Br%2B%2B%29if%28i%28o%5Br%5D.value%2Ce%29%29return%20l%28t%2Co%5Br%5D.value%29%3Bfor%28r%3D0%3Br%3Co.length%3Br%2B%2B%29if%28i%28o%5Br%5D.textContent%2Ce%29%29return%20l%28t%2Co%5Br%5D.value%29%3Breturn%200%7Dfunction%20s%28t%2Ce%29%7Bvar%20n%3Do%28t%2C%27select%5Bid%5E%3D%22bl%27%2Be.id%2B%27_%22%5D%27%29%3Bif%28%21n.length%29return%200%3Bn.sort%28function%28t%2Ce%29%7Breturn%20r%28t.id%29-r%28e.id%29%7D%29%3Bvar%20i%3De.answer.split%28%2F%5B%3B%EF%BC%9B%5D%2F%29%3Bi.length%3Cn.length%26%26%28i%3De.answer.split%28%2F%5B%2C%EF%BC%8C%E3%80%81%5D%2F%29%29%2Ci%3Di.map%28function%28t%29%7Breturn%20t.trim%28%29%7D%29.filter%28Boolean%29%3Bfor%28var%20a%3D0%2Cu%3D0%3Bu%3Cn.length%26%26u%3Ci.length%3Bu%2B%2B%29a%2B%3Df%28n%5Bu%5D%2Ci%5Bu%5D%29%3Breturn%20a%7Dfunction%20d%28t%2Ce%29%7Bfor%28var%20n%3Do%28t%2C%22textarea%22%29%2Cr%3D0%3Br%3Cn.length%3Br%2B%2B%29%7Bif%28-1%21%3D%3D%28%28n%5Br%5D.id%7C%7C%22%22%29%2B%22%20%22%2B%28n%5Br%5D.name%7C%7C%22%22%29%2B%22%20%22%2B%28n%5Br%5D.className%7C%7C%22%22%29%29.indexOf%28e.id%29%29return%20n%5Br%5D.value%3De.answer%2Cn%5Br%5D.dispatchEvent%28new%20Event%28%22input%22%2C%7Bbubbles%3A%210%7D%29%29%2Cn%5Br%5D.dispatchEvent%28new%20Event%28%22change%22%2C%7Bbubbles%3A%210%7D%29%29%2C1%7Dreturn%200%7Dfunction%20p%28%29%7Bvar%20t%3Dfunction%28%29%7Bvar%20t%3D%5Bwindow%5D%3Btry%7Bfor%28var%20e%3D0%3Be%3Cwindow.frames.length%3Be%2B%2B%29t.push%28window.frames%5Be%5D%29%7Dcatch%28t%29%7B%7Dfor%28var%20n%3D0%3Bn%3Ct.length%3Bn%2B%2B%29try%7Bvar%20r%3Dt%5Bn%5D%3Bif%28r%26%26r.view%26%26%22function%22%3D%3Dtypeof%20r.view.NewContentXml%29return%20r.view%7Dcatch%28t%29%7B%7Dreturn%20null%7D%28%29%3Bif%28%21t%29return%20e%28%22%E8%BF%98%E6%B2%A1%E6%89%BE%E5%88%B0%E8%AF%95%E5%8D%B7%E6%95%B0%E6%8D%AE%20window.view%EF%BC%8C%E7%AD%89%E4%B8%80%E4%BC%9A%E5%84%BF%E5%86%8D%E8%AF%95%E2%80%A6%22%29%2C%211%3Bvar%20r%3D%22%22%3Btry%7Br%3Dt.NewContentXml%28%29%7C%7C%22%22%7Dcatch%28t%29%7Breturn%20e%28%22NewContentXml%28%29%20%E6%8A%A5%E9%94%99%EF%BC%9A%22%2Ct%29%2C%211%7Dif%28%21r%29return%20e%28%22%E8%AF%95%E5%8D%B7%20XML%20%E8%BF%98%E6%98%AF%E7%A9%BA%E7%9A%84%EF%BC%8C%E7%AD%89%E4%B8%80%E4%BC%9A%E5%84%BF%E5%86%8D%E8%AF%95%E2%80%A6%22%29%2C%211%3Bvar%20i%3Dfunction%28t%29%7Bvar%20e%3D%28new%20DOMParser%29.parseFromString%28t%2C%22text%2Fxml%22%29%3Bif%28e.querySelector%28%22parsererror%22%29%29return%5B%5D%3Bfor%28var%20r%3Dn%28e.querySelectorAll%28%22Question%22%29%29%2Ci%3D%5B%5D%2Co%3D0%3Bo%3Cr.length%3Bo%2B%2B%29%7Bvar%20a%3Dr%5Bo%5D.querySelector%28%22QuestionID%22%29%2Cu%3Dr%5Bo%5D.querySelector%28%22StdAnswer%22%29%3Ba%26%26u%26%26i.push%28%7Btype%3A%28r%5Bo%5D.getAttribute%28%22Type%22%29%7C%7C%22%22%29.toUpperCase%28%29%2Cid%3A%28a.textContent%7C%7C%22%22%29.trim%28%29%2Canswer%3A%28u.textContent%7C%7C%22%22%29.trim%28%29%7D%29%7Dreturn%20i%7D%28r%29%3Bif%28%21i.length%29return%20e%28%22%E8%AF%95%E5%8D%B7%20XML%20%E9%87%8C%E8%BF%98%E6%B2%A1%E8%A7%A3%E6%9E%90%E5%87%BA%E9%A2%98%E7%9B%AE%EF%BC%8C%E7%AD%89%E4%B8%80%E4%BC%9A%E5%84%BF%E5%86%8D%E8%AF%95%E2%80%A6%22%29%2C%211%3Bfor%28var%20o%3Dfunction%28%29%7Bvar%20t%3D%5B%5D%3Btry%7Bt.push%28document%29%7Dcatch%28t%29%7B%7Dfor%28var%20e%3Ddocument.querySelectorAll%28%22iframe%2C%20frame%22%29%2Cn%3D0%3Bn%3Ce.length%3Bn%2B%2B%29try%7Bvar%20r%3De%5Bn%5D.contentDocument%3Br%26%26-1%3D%3D%3Dt.indexOf%28r%29%26%26t.push%28r%29%7Dcatch%28t%29%7B%7Dreturn%20t%7D%28%29%2Cl%3D%7BSS%3A0%2CMS%3A0%2CTF%3A0%2CBL%3A0%2CSK%3A0%7D%2Cf%3D%5B%5D%2Cp%3D0%3Bp%3Ci.length%3Bp%2B%2B%29%7Bvar%20v%3Di%5Bp%5D%2Ch%3D0%3Bif%28%22SS%22%3D%3D%3Dv.type%29h%3Da%28o%2Cv%29%3Belse%20if%28%22MS%22%3D%3D%3Dv.type%29h%3Du%28o%2Cv%29%3Belse%20if%28%22TF%22%3D%3D%3Dv.type%29h%3Dc%28o%2Cv%29%3Belse%20if%28%22BL%22%3D%3D%3Dv.type%29h%3Ds%28o%2Cv%29%3Belse%7Bif%28%22SK%22%21%3D%3Dv.type%29%7Bf.push%28v.id%2B%22%20%E9%A2%98%E5%9E%8B%20%22%2Bv.type%2B%22%20%E6%9A%82%E4%B8%8D%E6%94%AF%E6%8C%81%22%29%3Bcontinue%7Dh%3Dd%28o%2Cv%29%7Dh%3E0%3Fl%5Bv.type%5D%2B%2B%3Af.push%28v.id%2B%22%EF%BC%88%22%2Bv.type%2B%22%EF%BC%89%E6%B2%A1%E5%8C%B9%E9%85%8D%E4%B8%8A%22%29%7Dreturn%20e%28%22%E5%85%B1%20%22%2Bi.length%2B%22%20%E9%A2%98%EF%BC%8C%E5%A1%AB%E5%85%85%E6%83%85%E5%86%B5%EF%BC%9A%22%2Cl%29%2Cf.length%26%26e%28%22%E8%BF%99%E4%BA%9B%E9%A2%98%E6%B2%A1%E5%A1%AB%E4%B8%8A%EF%BC%9A%22%2Cf%29%2C%210%7Dfunction%20v%28%29%7Bvar%20t%3Dnull%3Btry%7B%22function%22%3D%3Dtypeof%20window.SubmitExam%26%26%28t%3Dwindow.SubmitExam.bind%28window%29%29%7Dcatch%28t%29%7B%7Dfor%28var%20n%3D0%3B%21t%26%26n%3Cwindow.frames.length%3Bn%2B%2B%29try%7Bvar%20r%3Dwindow.frames%5Bn%5D%3B%22function%22%3D%3Dtypeof%20r.SubmitExam%26%26%28t%3Dr.SubmitExam.bind%28r%29%29%7Dcatch%28t%29%7B%7Dif%28t%29%7Be%28%22%E6%AD%A3%E5%9C%A8%E6%8F%90%E4%BA%A4%E2%80%A6%22%29%3Btry%7Bt%28%29%7Dcatch%28t%29%7Be%28%22%E6%8F%90%E4%BA%A4%E5%87%BA%E9%94%99%EF%BC%9A%22%2Ct%29%7D%7Delse%20e%28%22%E6%B2%A1%E6%89%BE%E5%88%B0%20SubmitExam%28%29%EF%BC%8C%E8%AF%B7%E8%87%AA%E5%B7%B1%E7%82%B9%E9%A1%B5%E9%9D%A2%E4%B8%8A%E7%9A%84%E6%8F%90%E4%BA%A4%E6%8C%89%E9%92%AE%E3%80%82%22%29%7Dfunction%20h%28%29%7BsetTimeout%28v%2C400%29%7Dwindow.__PLP_RUNNING__%3D%210%3Bvar%20w%3D0%2Cm%3Dnull%3Bfunction%20y%28%29%7Breturn%21%21p%28%29%26%26%28m%26%26clearInterval%28m%29%2Ch%28%29%2C%210%29%7Dwindow.__PLP__%3D%7Brun%3Ap%2Cfill%3Ap%2Csubmit%3Av%7D%2Cfunction%28%29%7Bif%28%21document.getElementById%28%22__plp_btn__%22%29%26%26document.body%29%7Bvar%20t%3Ddocument.createElement%28%22button%22%29%3Bt.id%3D%22__plp_btn__%22%2Ct.type%3D%22button%22%2Ct.textContent%3D%22%E4%B8%80%E9%94%AE%E7%AD%94%E9%A2%98%E5%B9%B6%E6%8F%90%E4%BA%A4%22%2Ct.style.cssText%3D%22position%3Afixed%3Bright%3A24px%3Bbottom%3A24px%3Bz-index%3A99999%3Bpadding%3A10px%2014px%3Bbackground%3A%230f8bfd%3Bcolor%3A%23fff%3Bborder%3Anone%3Bborder-radius%3A6px%3Bcursor%3Apointer%3Bfont-size%3A14px%3Bbox-shadow%3A0%202px%208px%20rgba%280%2C0%2C0%2C.25%29%22%2Ct.addEventListener%28%22click%22%2Cfunction%28%29%7Bp%28%29%26%26h%28%29%7D%29%2Cdocument.body.appendChild%28t%29%7D%7D%28%29%2Cm%3DsetInterval%28function%28%29%7Bw%2B%2B%2C%21y%28%29%26%26w%3E%3D20%26%26%28clearInterval%28m%29%2Ce%28%22%E7%AD%89%E4%BA%86%2020%20%E7%A7%92%E8%BF%98%E6%98%AF%E6%B2%A1%E6%8B%BF%E5%88%B0%E9%A2%98%E7%9B%AE%EF%BC%8C%E5%B7%B2%E5%81%9C%E6%AD%A2%E3%80%82%E8%AF%B7%E7%A1%AE%E8%AE%A4%EF%BC%9A1%29%20%E9%A1%B5%E9%9D%A2%E5%B7%B2%E7%BB%8F%E8%BF%9B%E5%85%A5%E8%AF%95%E5%8D%B7%202%29%20%E6%8D%A2%E4%B8%AA%20frame%20%E5%86%8D%E8%AF%95%E4%B8%80%E6%AC%A1%E3%80%82%22%29%29%7D%2C1e3%29%2Cy%28%29%7D%28%29%3B">📝 大物预习（填完自动提交）</a>
+    </p>
+    <p class="muted" style="text-align:center">确认上面那个好用之后再换这个。</p>
+    <div class="note">
+      <b>拖不上去？</b>点下面的「复制书签代码」，然后手动新建一个书签：名字随便起，
+      把复制的内容粘进「网址 / URL」那一栏即可。
+      <div style="margin-top:10px">
+        <button class="btn ghost" data-copy="codeNo">复制书签代码（只填答案）</button>
+        <button class="btn ghost" data-copy="codeYes">复制书签代码（自动提交）</button>
+      </div>
+      <textarea id="codeNo" readonly>javascript:%21function%28%29%7B%22use%20strict%22%3Bvar%20t%3D%22%5B%E5%A4%A7%E7%89%A9%E9%A2%84%E4%B9%A0%5D%22%3Bfunction%20e%28%29%7Bvar%20e%3DArray.prototype.slice.call%28arguments%29%3Bconsole.log.apply%28console%2C%5Bt%5D.concat%28e%29%29%7Dif%28window.__PLP_RUNNING__%29return%20e%28%22%E8%84%9A%E6%9C%AC%E5%B7%B2%E7%BB%8F%E5%9C%A8%E8%BF%90%E8%A1%8C%EF%BC%8C%E6%89%8B%E5%8A%A8%E5%86%8D%E5%A1%AB%E4%B8%80%E6%AC%A1%E2%80%A6%E2%80%A6%22%29%2Cvoid%28window.__PLP__%26%26window.__PLP__.fill%28%29%29%3Bfunction%20n%28t%29%7Breturn%20Array.prototype.slice.call%28t%7C%7C%5B%5D%29%7Dfunction%20r%28t%29%7Bvar%20e%3DString%28t%29.match%28%2F%28%5Cd%2B%29%28%3F%21.%2A%5Cd%29%2F%29%3Breturn%20e%3FparseInt%28e%5B1%5D%2C10%29%3A0%7Dfunction%20i%28t%2Ce%29%7Breturn%20String%28t%29.trim%28%29.toLowerCase%28%29%3D%3D%3DString%28e%29.trim%28%29.toLowerCase%28%29%7Dfunction%20o%28t%2Ce%29%7Bfor%28var%20r%3D%5B%5D%2Ci%3D0%3Bi%3Ct.length%3Bi%2B%2B%29try%7Br%3Dr.concat%28n%28t%5Bi%5D.querySelectorAll%28e%29%29%29%7Dcatch%28t%29%7B%7Dreturn%20r%7Dfunction%20a%28t%2Ce%29%7Bfor%28var%20n%3Do%28t%2C%27input%5Btype%3D%22radio%22%5D%5Bname%3D%22ss%27%2Be.id%2B%27%22%5D%27%29%2Cr%3D0%3Br%3Cn.length%3Br%2B%2B%29if%28i%28n%5Br%5D.value%2Ce.answer%29%29return%20n%5Br%5D.click%28%29%2C1%3Breturn%200%7Dfunction%20u%28t%2Ce%29%7Bfor%28var%20n%3DString%28e.answer%29.match%28%2F%5BA-Za-z%5D%2Fg%29%7C%7C%5B%5D%2Cr%3Do%28t%2C%27input%5Btype%3D%22checkbox%22%5D%27%29%2Ci%3D0%2Ca%3D0%3Ba%3Cn.length%3Ba%2B%2B%29for%28var%20u%3Dn%5Ba%5D.toUpperCase%28%29%2Cc%3D0%3Bc%3Cr.length%3Bc%2B%2B%29%7Bvar%20l%3Dr%5Bc%5D%2Cf%3Dl.id%7C%7C%22%22%2Cs%3Dl.name%7C%7C%22%22%3Bif%28f%3D%3D%3D%22ms%22%2Be.id%2B%22_%22%2Bu%7C%7Cs%3D%3D%3D%22ms%22%2Be.id%2B%22_%22%2Bu%7C%7C-1%21%3D%3Df.indexOf%28e.id%29%26%26f.slice%28-1%29.toUpperCase%28%29%3D%3D%3Du%29%7Bl.checked%7C%7Cl.click%28%29%2Ci%2B%2B%3Bbreak%7D%7Dreturn%20i%7Dfunction%20c%28t%2Ce%29%7Bfor%28var%20n%3D%2F%5E%5Cs%2A%28%E6%AD%A3%E7%A1%AE%7C%E5%AF%B9%7C%E6%98%AF%7Ctrue%7Ct%7C%E2%88%9A%7C1%7Ca%29%5Cs%2A%24%2Fi.test%28e.answer%29%3F%5B%22T%22%2C%22A%22%2C%221%22%2C%22true%22%2C%22%E6%AD%A3%E7%A1%AE%22%2C%22%E5%AF%B9%22%5D%3A%5B%22F%22%2C%22B%22%2C%220%22%2C%22false%22%2C%22%E9%94%99%E8%AF%AF%22%2C%22%E9%94%99%22%5D%2Cr%3Do%28t%2C%27input%5Btype%3D%22radio%22%5D%5Bname%3D%22tf%27%2Be.id%2B%27%22%5D%27%29%2Ca%3D0%3Ba%3Cn.length%3Ba%2B%2B%29for%28var%20u%3D0%3Bu%3Cr.length%3Bu%2B%2B%29if%28i%28r%5Bu%5D.value%2Cn%5Ba%5D%29%29return%20r%5Bu%5D.click%28%29%2C1%3Breturn%200%7Dfunction%20l%28t%2Ce%29%7Breturn%20t.value%3De%2Ct.dispatchEvent%28new%20Event%28%22change%22%2C%7Bbubbles%3A%210%7D%29%29%2C1%7Dfunction%20f%28t%2Ce%29%7Bvar%20r%2Co%3Dn%28t.options%29%3Bfor%28r%3D0%3Br%3Co.length%3Br%2B%2B%29if%28i%28o%5Br%5D.value%2Ce%29%29return%20l%28t%2Co%5Br%5D.value%29%3Bfor%28r%3D0%3Br%3Co.length%3Br%2B%2B%29if%28i%28o%5Br%5D.textContent%2Ce%29%29return%20l%28t%2Co%5Br%5D.value%29%3Breturn%200%7Dfunction%20s%28t%2Ce%29%7Bvar%20n%3Do%28t%2C%27select%5Bid%5E%3D%22bl%27%2Be.id%2B%27_%22%5D%27%29%3Bif%28%21n.length%29return%200%3Bn.sort%28function%28t%2Ce%29%7Breturn%20r%28t.id%29-r%28e.id%29%7D%29%3Bvar%20i%3De.answer.split%28%2F%5B%3B%EF%BC%9B%5D%2F%29%3Bi.length%3Cn.length%26%26%28i%3De.answer.split%28%2F%5B%2C%EF%BC%8C%E3%80%81%5D%2F%29%29%2Ci%3Di.map%28function%28t%29%7Breturn%20t.trim%28%29%7D%29.filter%28Boolean%29%3Bfor%28var%20a%3D0%2Cu%3D0%3Bu%3Cn.length%26%26u%3Ci.length%3Bu%2B%2B%29a%2B%3Df%28n%5Bu%5D%2Ci%5Bu%5D%29%3Breturn%20a%7Dfunction%20d%28t%2Ce%29%7Bfor%28var%20n%3Do%28t%2C%22textarea%22%29%2Cr%3D0%3Br%3Cn.length%3Br%2B%2B%29%7Bif%28-1%21%3D%3D%28%28n%5Br%5D.id%7C%7C%22%22%29%2B%22%20%22%2B%28n%5Br%5D.name%7C%7C%22%22%29%2B%22%20%22%2B%28n%5Br%5D.className%7C%7C%22%22%29%29.indexOf%28e.id%29%29return%20n%5Br%5D.value%3De.answer%2Cn%5Br%5D.dispatchEvent%28new%20Event%28%22input%22%2C%7Bbubbles%3A%210%7D%29%29%2Cn%5Br%5D.dispatchEvent%28new%20Event%28%22change%22%2C%7Bbubbles%3A%210%7D%29%29%2C1%7Dreturn%200%7Dfunction%20p%28%29%7Bvar%20t%3Dfunction%28%29%7Bvar%20t%3D%5Bwindow%5D%3Btry%7Bfor%28var%20e%3D0%3Be%3Cwindow.frames.length%3Be%2B%2B%29t.push%28window.frames%5Be%5D%29%7Dcatch%28t%29%7B%7Dfor%28var%20n%3D0%3Bn%3Ct.length%3Bn%2B%2B%29try%7Bvar%20r%3Dt%5Bn%5D%3Bif%28r%26%26r.view%26%26%22function%22%3D%3Dtypeof%20r.view.NewContentXml%29return%20r.view%7Dcatch%28t%29%7B%7Dreturn%20null%7D%28%29%3Bif%28%21t%29return%20e%28%22%E8%BF%98%E6%B2%A1%E6%89%BE%E5%88%B0%E8%AF%95%E5%8D%B7%E6%95%B0%E6%8D%AE%20window.view%EF%BC%8C%E7%AD%89%E4%B8%80%E4%BC%9A%E5%84%BF%E5%86%8D%E8%AF%95%E2%80%A6%22%29%2C%211%3Bvar%20r%3D%22%22%3Btry%7Br%3Dt.NewContentXml%28%29%7C%7C%22%22%7Dcatch%28t%29%7Breturn%20e%28%22NewContentXml%28%29%20%E6%8A%A5%E9%94%99%EF%BC%9A%22%2Ct%29%2C%211%7Dif%28%21r%29return%20e%28%22%E8%AF%95%E5%8D%B7%20XML%20%E8%BF%98%E6%98%AF%E7%A9%BA%E7%9A%84%EF%BC%8C%E7%AD%89%E4%B8%80%E4%BC%9A%E5%84%BF%E5%86%8D%E8%AF%95%E2%80%A6%22%29%2C%211%3Bvar%20i%3Dfunction%28t%29%7Bvar%20e%3D%28new%20DOMParser%29.parseFromString%28t%2C%22text%2Fxml%22%29%3Bif%28e.querySelector%28%22parsererror%22%29%29return%5B%5D%3Bfor%28var%20r%3Dn%28e.querySelectorAll%28%22Question%22%29%29%2Ci%3D%5B%5D%2Co%3D0%3Bo%3Cr.length%3Bo%2B%2B%29%7Bvar%20a%3Dr%5Bo%5D.querySelector%28%22QuestionID%22%29%2Cu%3Dr%5Bo%5D.querySelector%28%22StdAnswer%22%29%3Ba%26%26u%26%26i.push%28%7Btype%3A%28r%5Bo%5D.getAttribute%28%22Type%22%29%7C%7C%22%22%29.toUpperCase%28%29%2Cid%3A%28a.textContent%7C%7C%22%22%29.trim%28%29%2Canswer%3A%28u.textContent%7C%7C%22%22%29.trim%28%29%7D%29%7Dreturn%20i%7D%28r%29%3Bif%28%21i.length%29return%20e%28%22%E8%AF%95%E5%8D%B7%20XML%20%E9%87%8C%E8%BF%98%E6%B2%A1%E8%A7%A3%E6%9E%90%E5%87%BA%E9%A2%98%E7%9B%AE%EF%BC%8C%E7%AD%89%E4%B8%80%E4%BC%9A%E5%84%BF%E5%86%8D%E8%AF%95%E2%80%A6%22%29%2C%211%3Bfor%28var%20o%3Dfunction%28%29%7Bvar%20t%3D%5B%5D%3Btry%7Bt.push%28document%29%7Dcatch%28t%29%7B%7Dfor%28var%20e%3Ddocument.querySelectorAll%28%22iframe%2C%20frame%22%29%2Cn%3D0%3Bn%3Ce.length%3Bn%2B%2B%29try%7Bvar%20r%3De%5Bn%5D.contentDocument%3Br%26%26-1%3D%3D%3Dt.indexOf%28r%29%26%26t.push%28r%29%7Dcatch%28t%29%7B%7Dreturn%20t%7D%28%29%2Cl%3D%7BSS%3A0%2CMS%3A0%2CTF%3A0%2CBL%3A0%2CSK%3A0%7D%2Cf%3D%5B%5D%2Cp%3D0%3Bp%3Ci.length%3Bp%2B%2B%29%7Bvar%20v%3Di%5Bp%5D%2Ch%3D0%3Bif%28%22SS%22%3D%3D%3Dv.type%29h%3Da%28o%2Cv%29%3Belse%20if%28%22MS%22%3D%3D%3Dv.type%29h%3Du%28o%2Cv%29%3Belse%20if%28%22TF%22%3D%3D%3Dv.type%29h%3Dc%28o%2Cv%29%3Belse%20if%28%22BL%22%3D%3D%3Dv.type%29h%3Ds%28o%2Cv%29%3Belse%7Bif%28%22SK%22%21%3D%3Dv.type%29%7Bf.push%28v.id%2B%22%20%E9%A2%98%E5%9E%8B%20%22%2Bv.type%2B%22%20%E6%9A%82%E4%B8%8D%E6%94%AF%E6%8C%81%22%29%3Bcontinue%7Dh%3Dd%28o%2Cv%29%7Dh%3E0%3Fl%5Bv.type%5D%2B%2B%3Af.push%28v.id%2B%22%EF%BC%88%22%2Bv.type%2B%22%EF%BC%89%E6%B2%A1%E5%8C%B9%E9%85%8D%E4%B8%8A%22%29%7Dreturn%20e%28%22%E5%85%B1%20%22%2Bi.length%2B%22%20%E9%A2%98%EF%BC%8C%E5%A1%AB%E5%85%85%E6%83%85%E5%86%B5%EF%BC%9A%22%2Cl%29%2Cf.length%26%26e%28%22%E8%BF%99%E4%BA%9B%E9%A2%98%E6%B2%A1%E5%A1%AB%E4%B8%8A%EF%BC%9A%22%2Cf%29%2C%210%7Dfunction%20v%28%29%7Bvar%20t%3Dnull%3Btry%7B%22function%22%3D%3Dtypeof%20window.SubmitExam%26%26%28t%3Dwindow.SubmitExam.bind%28window%29%29%7Dcatch%28t%29%7B%7Dfor%28var%20n%3D0%3B%21t%26%26n%3Cwindow.frames.length%3Bn%2B%2B%29try%7Bvar%20r%3Dwindow.frames%5Bn%5D%3B%22function%22%3D%3Dtypeof%20r.SubmitExam%26%26%28t%3Dr.SubmitExam.bind%28r%29%29%7Dcatch%28t%29%7B%7Dif%28t%29%7Be%28%22%E6%AD%A3%E5%9C%A8%E6%8F%90%E4%BA%A4%E2%80%A6%22%29%3Btry%7Bt%28%29%7Dcatch%28t%29%7Be%28%22%E6%8F%90%E4%BA%A4%E5%87%BA%E9%94%99%EF%BC%9A%22%2Ct%29%7D%7Delse%20e%28%22%E6%B2%A1%E6%89%BE%E5%88%B0%20SubmitExam%28%29%EF%BC%8C%E8%AF%B7%E8%87%AA%E5%B7%B1%E7%82%B9%E9%A1%B5%E9%9D%A2%E4%B8%8A%E7%9A%84%E6%8F%90%E4%BA%A4%E6%8C%89%E9%92%AE%E3%80%82%22%29%7Dfunction%20h%28%29%7Be%28%22%E5%B7%B2%E8%B7%B3%E8%BF%87%E8%87%AA%E5%8A%A8%E6%8F%90%E4%BA%A4%EF%BC%88SUBMIT%20%3D%20false%EF%BC%89%EF%BC%8C%E8%AF%B7%E8%87%AA%E5%B7%B1%E7%82%B9%E6%8F%90%E4%BA%A4%E3%80%82%22%29%7Dwindow.__PLP_RUNNING__%3D%210%3Bvar%20w%3D0%2Cm%3Dnull%3Bfunction%20y%28%29%7Breturn%21%21p%28%29%26%26%28m%26%26clearInterval%28m%29%2Ch%28%29%2C%210%29%7Dwindow.__PLP__%3D%7Brun%3Ap%2Cfill%3Ap%2Csubmit%3Av%7D%2Cfunction%28%29%7Bif%28%21document.getElementById%28%22__plp_btn__%22%29%26%26document.body%29%7Bvar%20t%3Ddocument.createElement%28%22button%22%29%3Bt.id%3D%22__plp_btn__%22%2Ct.type%3D%22button%22%2Ct.textContent%3D%22%E4%B8%80%E9%94%AE%E7%AD%94%E9%A2%98%EF%BC%88%E4%B8%8D%E6%8F%90%E4%BA%A4%EF%BC%89%22%2Ct.style.cssText%3D%22position%3Afixed%3Bright%3A24px%3Bbottom%3A24px%3Bz-index%3A99999%3Bpadding%3A10px%2014px%3Bbackground%3A%230f8bfd%3Bcolor%3A%23fff%3Bborder%3Anone%3Bborder-radius%3A6px%3Bcursor%3Apointer%3Bfont-size%3A14px%3Bbox-shadow%3A0%202px%208px%20rgba%280%2C0%2C0%2C.25%29%22%2Ct.addEventListener%28%22click%22%2Cfunction%28%29%7Bp%28%29%26%26h%28%29%7D%29%2Cdocument.body.appendChild%28t%29%7D%7D%28%29%2Cm%3DsetInterval%28function%28%29%7Bw%2B%2B%2C%21y%28%29%26%26w%3E%3D20%26%26%28clearInterval%28m%29%2Ce%28%22%E7%AD%89%E4%BA%86%2020%20%E7%A7%92%E8%BF%98%E6%98%AF%E6%B2%A1%E6%8B%BF%E5%88%B0%E9%A2%98%E7%9B%AE%EF%BC%8C%E5%B7%B2%E5%81%9C%E6%AD%A2%E3%80%82%E8%AF%B7%E7%A1%AE%E8%AE%A4%EF%BC%9A1%29%20%E9%A1%B5%E9%9D%A2%E5%B7%B2%E7%BB%8F%E8%BF%9B%E5%85%A5%E8%AF%95%E5%8D%B7%202%29%20%E6%8D%A2%E4%B8%AA%20frame%20%E5%86%8D%E8%AF%95%E4%B8%80%E6%AC%A1%E3%80%82%22%29%29%7D%2C1e3%29%2Cy%28%29%7D%28%29%3B</textarea>
+      <textarea id="codeYes" readonly>javascript:%21function%28%29%7B%22use%20strict%22%3Bvar%20t%3D%22%5B%E5%A4%A7%E7%89%A9%E9%A2%84%E4%B9%A0%5D%22%3Bfunction%20e%28%29%7Bvar%20e%3DArray.prototype.slice.call%28arguments%29%3Bconsole.log.apply%28console%2C%5Bt%5D.concat%28e%29%29%7Dif%28window.__PLP_RUNNING__%29return%20e%28%22%E8%84%9A%E6%9C%AC%E5%B7%B2%E7%BB%8F%E5%9C%A8%E8%BF%90%E8%A1%8C%EF%BC%8C%E6%89%8B%E5%8A%A8%E5%86%8D%E5%A1%AB%E4%B8%80%E6%AC%A1%E2%80%A6%E2%80%A6%22%29%2Cvoid%28window.__PLP__%26%26window.__PLP__.fill%28%29%29%3Bfunction%20n%28t%29%7Breturn%20Array.prototype.slice.call%28t%7C%7C%5B%5D%29%7Dfunction%20r%28t%29%7Bvar%20e%3DString%28t%29.match%28%2F%28%5Cd%2B%29%28%3F%21.%2A%5Cd%29%2F%29%3Breturn%20e%3FparseInt%28e%5B1%5D%2C10%29%3A0%7Dfunction%20i%28t%2Ce%29%7Breturn%20String%28t%29.trim%28%29.toLowerCase%28%29%3D%3D%3DString%28e%29.trim%28%29.toLowerCase%28%29%7Dfunction%20o%28t%2Ce%29%7Bfor%28var%20r%3D%5B%5D%2Ci%3D0%3Bi%3Ct.length%3Bi%2B%2B%29try%7Br%3Dr.concat%28n%28t%5Bi%5D.querySelectorAll%28e%29%29%29%7Dcatch%28t%29%7B%7Dreturn%20r%7Dfunction%20a%28t%2Ce%29%7Bfor%28var%20n%3Do%28t%2C%27input%5Btype%3D%22radio%22%5D%5Bname%3D%22ss%27%2Be.id%2B%27%22%5D%27%29%2Cr%3D0%3Br%3Cn.length%3Br%2B%2B%29if%28i%28n%5Br%5D.value%2Ce.answer%29%29return%20n%5Br%5D.click%28%29%2C1%3Breturn%200%7Dfunction%20u%28t%2Ce%29%7Bfor%28var%20n%3DString%28e.answer%29.match%28%2F%5BA-Za-z%5D%2Fg%29%7C%7C%5B%5D%2Cr%3Do%28t%2C%27input%5Btype%3D%22checkbox%22%5D%27%29%2Ci%3D0%2Ca%3D0%3Ba%3Cn.length%3Ba%2B%2B%29for%28var%20u%3Dn%5Ba%5D.toUpperCase%28%29%2Cc%3D0%3Bc%3Cr.length%3Bc%2B%2B%29%7Bvar%20l%3Dr%5Bc%5D%2Cf%3Dl.id%7C%7C%22%22%2Cs%3Dl.name%7C%7C%22%22%3Bif%28f%3D%3D%3D%22ms%22%2Be.id%2B%22_%22%2Bu%7C%7Cs%3D%3D%3D%22ms%22%2Be.id%2B%22_%22%2Bu%7C%7C-1%21%3D%3Df.indexOf%28e.id%29%26%26f.slice%28-1%29.toUpperCase%28%29%3D%3D%3Du%29%7Bl.checked%7C%7Cl.click%28%29%2Ci%2B%2B%3Bbreak%7D%7Dreturn%20i%7Dfunction%20c%28t%2Ce%29%7Bfor%28var%20n%3D%2F%5E%5Cs%2A%28%E6%AD%A3%E7%A1%AE%7C%E5%AF%B9%7C%E6%98%AF%7Ctrue%7Ct%7C%E2%88%9A%7C1%7Ca%29%5Cs%2A%24%2Fi.test%28e.answer%29%3F%5B%22T%22%2C%22A%22%2C%221%22%2C%22true%22%2C%22%E6%AD%A3%E7%A1%AE%22%2C%22%E5%AF%B9%22%5D%3A%5B%22F%22%2C%22B%22%2C%220%22%2C%22false%22%2C%22%E9%94%99%E8%AF%AF%22%2C%22%E9%94%99%22%5D%2Cr%3Do%28t%2C%27input%5Btype%3D%22radio%22%5D%5Bname%3D%22tf%27%2Be.id%2B%27%22%5D%27%29%2Ca%3D0%3Ba%3Cn.length%3Ba%2B%2B%29for%28var%20u%3D0%3Bu%3Cr.length%3Bu%2B%2B%29if%28i%28r%5Bu%5D.value%2Cn%5Ba%5D%29%29return%20r%5Bu%5D.click%28%29%2C1%3Breturn%200%7Dfunction%20l%28t%2Ce%29%7Breturn%20t.value%3De%2Ct.dispatchEvent%28new%20Event%28%22change%22%2C%7Bbubbles%3A%210%7D%29%29%2C1%7Dfunction%20f%28t%2Ce%29%7Bvar%20r%2Co%3Dn%28t.options%29%3Bfor%28r%3D0%3Br%3Co.length%3Br%2B%2B%29if%28i%28o%5Br%5D.value%2Ce%29%29return%20l%28t%2Co%5Br%5D.value%29%3Bfor%28r%3D0%3Br%3Co.length%3Br%2B%2B%29if%28i%28o%5Br%5D.textContent%2Ce%29%29return%20l%28t%2Co%5Br%5D.value%29%3Breturn%200%7Dfunction%20s%28t%2Ce%29%7Bvar%20n%3Do%28t%2C%27select%5Bid%5E%3D%22bl%27%2Be.id%2B%27_%22%5D%27%29%3Bif%28%21n.length%29return%200%3Bn.sort%28function%28t%2Ce%29%7Breturn%20r%28t.id%29-r%28e.id%29%7D%29%3Bvar%20i%3De.answer.split%28%2F%5B%3B%EF%BC%9B%5D%2F%29%3Bi.length%3Cn.length%26%26%28i%3De.answer.split%28%2F%5B%2C%EF%BC%8C%E3%80%81%5D%2F%29%29%2Ci%3Di.map%28function%28t%29%7Breturn%20t.trim%28%29%7D%29.filter%28Boolean%29%3Bfor%28var%20a%3D0%2Cu%3D0%3Bu%3Cn.length%26%26u%3Ci.length%3Bu%2B%2B%29a%2B%3Df%28n%5Bu%5D%2Ci%5Bu%5D%29%3Breturn%20a%7Dfunction%20d%28t%2Ce%29%7Bfor%28var%20n%3Do%28t%2C%22textarea%22%29%2Cr%3D0%3Br%3Cn.length%3Br%2B%2B%29%7Bif%28-1%21%3D%3D%28%28n%5Br%5D.id%7C%7C%22%22%29%2B%22%20%22%2B%28n%5Br%5D.name%7C%7C%22%22%29%2B%22%20%22%2B%28n%5Br%5D.className%7C%7C%22%22%29%29.indexOf%28e.id%29%29return%20n%5Br%5D.value%3De.answer%2Cn%5Br%5D.dispatchEvent%28new%20Event%28%22input%22%2C%7Bbubbles%3A%210%7D%29%29%2Cn%5Br%5D.dispatchEvent%28new%20Event%28%22change%22%2C%7Bbubbles%3A%210%7D%29%29%2C1%7Dreturn%200%7Dfunction%20p%28%29%7Bvar%20t%3Dfunction%28%29%7Bvar%20t%3D%5Bwindow%5D%3Btry%7Bfor%28var%20e%3D0%3Be%3Cwindow.frames.length%3Be%2B%2B%29t.push%28window.frames%5Be%5D%29%7Dcatch%28t%29%7B%7Dfor%28var%20n%3D0%3Bn%3Ct.length%3Bn%2B%2B%29try%7Bvar%20r%3Dt%5Bn%5D%3Bif%28r%26%26r.view%26%26%22function%22%3D%3Dtypeof%20r.view.NewContentXml%29return%20r.view%7Dcatch%28t%29%7B%7Dreturn%20null%7D%28%29%3Bif%28%21t%29return%20e%28%22%E8%BF%98%E6%B2%A1%E6%89%BE%E5%88%B0%E8%AF%95%E5%8D%B7%E6%95%B0%E6%8D%AE%20window.view%EF%BC%8C%E7%AD%89%E4%B8%80%E4%BC%9A%E5%84%BF%E5%86%8D%E8%AF%95%E2%80%A6%22%29%2C%211%3Bvar%20r%3D%22%22%3Btry%7Br%3Dt.NewContentXml%28%29%7C%7C%22%22%7Dcatch%28t%29%7Breturn%20e%28%22NewContentXml%28%29%20%E6%8A%A5%E9%94%99%EF%BC%9A%22%2Ct%29%2C%211%7Dif%28%21r%29return%20e%28%22%E8%AF%95%E5%8D%B7%20XML%20%E8%BF%98%E6%98%AF%E7%A9%BA%E7%9A%84%EF%BC%8C%E7%AD%89%E4%B8%80%E4%BC%9A%E5%84%BF%E5%86%8D%E8%AF%95%E2%80%A6%22%29%2C%211%3Bvar%20i%3Dfunction%28t%29%7Bvar%20e%3D%28new%20DOMParser%29.parseFromString%28t%2C%22text%2Fxml%22%29%3Bif%28e.querySelector%28%22parsererror%22%29%29return%5B%5D%3Bfor%28var%20r%3Dn%28e.querySelectorAll%28%22Question%22%29%29%2Ci%3D%5B%5D%2Co%3D0%3Bo%3Cr.length%3Bo%2B%2B%29%7Bvar%20a%3Dr%5Bo%5D.querySelector%28%22QuestionID%22%29%2Cu%3Dr%5Bo%5D.querySelector%28%22StdAnswer%22%29%3Ba%26%26u%26%26i.push%28%7Btype%3A%28r%5Bo%5D.getAttribute%28%22Type%22%29%7C%7C%22%22%29.toUpperCase%28%29%2Cid%3A%28a.textContent%7C%7C%22%22%29.trim%28%29%2Canswer%3A%28u.textContent%7C%7C%22%22%29.trim%28%29%7D%29%7Dreturn%20i%7D%28r%29%3Bif%28%21i.length%29return%20e%28%22%E8%AF%95%E5%8D%B7%20XML%20%E9%87%8C%E8%BF%98%E6%B2%A1%E8%A7%A3%E6%9E%90%E5%87%BA%E9%A2%98%E7%9B%AE%EF%BC%8C%E7%AD%89%E4%B8%80%E4%BC%9A%E5%84%BF%E5%86%8D%E8%AF%95%E2%80%A6%22%29%2C%211%3Bfor%28var%20o%3Dfunction%28%29%7Bvar%20t%3D%5B%5D%3Btry%7Bt.push%28document%29%7Dcatch%28t%29%7B%7Dfor%28var%20e%3Ddocument.querySelectorAll%28%22iframe%2C%20frame%22%29%2Cn%3D0%3Bn%3Ce.length%3Bn%2B%2B%29try%7Bvar%20r%3De%5Bn%5D.contentDocument%3Br%26%26-1%3D%3D%3Dt.indexOf%28r%29%26%26t.push%28r%29%7Dcatch%28t%29%7B%7Dreturn%20t%7D%28%29%2Cl%3D%7BSS%3A0%2CMS%3A0%2CTF%3A0%2CBL%3A0%2CSK%3A0%7D%2Cf%3D%5B%5D%2Cp%3D0%3Bp%3Ci.length%3Bp%2B%2B%29%7Bvar%20v%3Di%5Bp%5D%2Ch%3D0%3Bif%28%22SS%22%3D%3D%3Dv.type%29h%3Da%28o%2Cv%29%3Belse%20if%28%22MS%22%3D%3D%3Dv.type%29h%3Du%28o%2Cv%29%3Belse%20if%28%22TF%22%3D%3D%3Dv.type%29h%3Dc%28o%2Cv%29%3Belse%20if%28%22BL%22%3D%3D%3Dv.type%29h%3Ds%28o%2Cv%29%3Belse%7Bif%28%22SK%22%21%3D%3Dv.type%29%7Bf.push%28v.id%2B%22%20%E9%A2%98%E5%9E%8B%20%22%2Bv.type%2B%22%20%E6%9A%82%E4%B8%8D%E6%94%AF%E6%8C%81%22%29%3Bcontinue%7Dh%3Dd%28o%2Cv%29%7Dh%3E0%3Fl%5Bv.type%5D%2B%2B%3Af.push%28v.id%2B%22%EF%BC%88%22%2Bv.type%2B%22%EF%BC%89%E6%B2%A1%E5%8C%B9%E9%85%8D%E4%B8%8A%22%29%7Dreturn%20e%28%22%E5%85%B1%20%22%2Bi.length%2B%22%20%E9%A2%98%EF%BC%8C%E5%A1%AB%E5%85%85%E6%83%85%E5%86%B5%EF%BC%9A%22%2Cl%29%2Cf.length%26%26e%28%22%E8%BF%99%E4%BA%9B%E9%A2%98%E6%B2%A1%E5%A1%AB%E4%B8%8A%EF%BC%9A%22%2Cf%29%2C%210%7Dfunction%20v%28%29%7Bvar%20t%3Dnull%3Btry%7B%22function%22%3D%3Dtypeof%20window.SubmitExam%26%26%28t%3Dwindow.SubmitExam.bind%28window%29%29%7Dcatch%28t%29%7B%7Dfor%28var%20n%3D0%3B%21t%26%26n%3Cwindow.frames.length%3Bn%2B%2B%29try%7Bvar%20r%3Dwindow.frames%5Bn%5D%3B%22function%22%3D%3Dtypeof%20r.SubmitExam%26%26%28t%3Dr.SubmitExam.bind%28r%29%29%7Dcatch%28t%29%7B%7Dif%28t%29%7Be%28%22%E6%AD%A3%E5%9C%A8%E6%8F%90%E4%BA%A4%E2%80%A6%22%29%3Btry%7Bt%28%29%7Dcatch%28t%29%7Be%28%22%E6%8F%90%E4%BA%A4%E5%87%BA%E9%94%99%EF%BC%9A%22%2Ct%29%7D%7Delse%20e%28%22%E6%B2%A1%E6%89%BE%E5%88%B0%20SubmitExam%28%29%EF%BC%8C%E8%AF%B7%E8%87%AA%E5%B7%B1%E7%82%B9%E9%A1%B5%E9%9D%A2%E4%B8%8A%E7%9A%84%E6%8F%90%E4%BA%A4%E6%8C%89%E9%92%AE%E3%80%82%22%29%7Dfunction%20h%28%29%7BsetTimeout%28v%2C400%29%7Dwindow.__PLP_RUNNING__%3D%210%3Bvar%20w%3D0%2Cm%3Dnull%3Bfunction%20y%28%29%7Breturn%21%21p%28%29%26%26%28m%26%26clearInterval%28m%29%2Ch%28%29%2C%210%29%7Dwindow.__PLP__%3D%7Brun%3Ap%2Cfill%3Ap%2Csubmit%3Av%7D%2Cfunction%28%29%7Bif%28%21document.getElementById%28%22__plp_btn__%22%29%26%26document.body%29%7Bvar%20t%3Ddocument.createElement%28%22button%22%29%3Bt.id%3D%22__plp_btn__%22%2Ct.type%3D%22button%22%2Ct.textContent%3D%22%E4%B8%80%E9%94%AE%E7%AD%94%E9%A2%98%E5%B9%B6%E6%8F%90%E4%BA%A4%22%2Ct.style.cssText%3D%22position%3Afixed%3Bright%3A24px%3Bbottom%3A24px%3Bz-index%3A99999%3Bpadding%3A10px%2014px%3Bbackground%3A%230f8bfd%3Bcolor%3A%23fff%3Bborder%3Anone%3Bborder-radius%3A6px%3Bcursor%3Apointer%3Bfont-size%3A14px%3Bbox-shadow%3A0%202px%208px%20rgba%280%2C0%2C0%2C.25%29%22%2Ct.addEventListener%28%22click%22%2Cfunction%28%29%7Bp%28%29%26%26h%28%29%7D%29%2Cdocument.body.appendChild%28t%29%7D%7D%28%29%2Cm%3DsetInterval%28function%28%29%7Bw%2B%2B%2C%21y%28%29%26%26w%3E%3D20%26%26%28clearInterval%28m%29%2Ce%28%22%E7%AD%89%E4%BA%86%2020%20%E7%A7%92%E8%BF%98%E6%98%AF%E6%B2%A1%E6%8B%BF%E5%88%B0%E9%A2%98%E7%9B%AE%EF%BC%8C%E5%B7%B2%E5%81%9C%E6%AD%A2%E3%80%82%E8%AF%B7%E7%A1%AE%E8%AE%A4%EF%BC%9A1%29%20%E9%A1%B5%E9%9D%A2%E5%B7%B2%E7%BB%8F%E8%BF%9B%E5%85%A5%E8%AF%95%E5%8D%B7%202%29%20%E6%8D%A2%E4%B8%AA%20frame%20%E5%86%8D%E8%AF%95%E4%B8%80%E6%AC%A1%E3%80%82%22%29%29%7D%2C1e3%29%2Cy%28%29%7D%28%29%3B</textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>其他两种用法</h2>
+
+    <h3>方式二 · 油猴脚本（Tampermonkey）</h3>
+    <p class="muted">适合长期使用：装一次，之后打开试卷页它会自动答题，连点书签都不用。</p>
+    <ol>
+      <li>给浏览器装 <a href="https://www.tampermonkey.net/" target="_blank" rel="noopener">Tampermonkey</a> 扩展。</li>
+      <li>点下面的按钮，Tampermonkey 会弹出安装页，点「安装」。</li>
+      <li>之后打开预习试卷页面就会自动运行，右下角也会有一个蓝色按钮。</li>
+    </ol>
+    <p>
+      <a class="btn blue" target="_blank" rel="noopener"
+         href="https://raw.githubusercontent.com/c2451134117-cyber/physics-lab-preexam/main/physics-lab-preexam.user.js">
+         安装油猴脚本
+      </a>
+    </p>
+    <p class="muted">安装后在 Tampermonkey 面板里可以改 <code>AUTO_SUBMIT</code> 开关，决定要不要自动交卷。</p>
+
+    <h3>方式三 · 控制台（临时用一次）</h3>
+    <ol>
+      <li>打开试卷页面，按 <code>F12</code> → 点 <code>Console</code>（控制台）。</li>
+      <li>点下面按钮复制代码，粘贴进控制台，回车。</li>
+    </ol>
+    <p><button class="btn ghost" data-copy="codeConsole">复制控制台代码</button></p>
+    <textarea id="codeConsole" readonly>/* ============================================================
+ * 科大奥锐 大物预习 · 一键答题（控制台 / 书签版）
+ * ------------------------------------------------------------
+ * 怎么用：
+ *   1. 打开预习试卷页面，等题目显示出来
+ *   2. 按 F12 -> 选 Console（控制台）
+ *   3. 把这个文件的内容全部粘进去，回车
+ *
+ * 第一次用，请先把下面 SUBMIT 改成 false 试一次，
+ * 确认题目都被填上了，再改回 true 让它自动交卷。
+ * ============================================================ */
+(function () {
+    "use strict";
+
+    var SUBMIT = true;     // true = 填完自动交卷；false = 只填答案，提交留给你自己点
+    var RETRY_MS = 1000;   // 找不到试卷数据时，每隔多久重试一次（毫秒）
+    var MAX_RETRY = 20;    // 最多重试多少次
+
+    var TAG = "[大物预习]";
+    function log() {
+        var args = Array.prototype.slice.call(arguments);
+        console.log.apply(console, [TAG].concat(args));
+    }
+
+    if (window.__PLP_RUNNING__) {
+        log("脚本已经在运行，手动再填一次……");
+        if (window.__PLP__) window.__PLP__.fill();
+        return;
+    }
+    window.__PLP_RUNNING__ = true;
+
+    /* ---------- 小工具 ---------- */
+    function toArray(list) { return Array.prototype.slice.call(list || []); }
+    function tailNumber(s) {
+        var m = String(s).match(/(\d+)(?!.*\d)/);
+        return m ? parseInt(m[1], 10) : 0;
+    }
+    function sameText(a, b) {
+        return String(a).trim().toLowerCase() === String(b).trim().toLowerCase();
+    }
+
+    /* ---------- 找页面元素：主文档 + 同源 iframe 都找 ---------- */
+    function documents() {
+        var out = [];
+        try { out.push(document); } catch (e) {}
+        var frames = document.querySelectorAll("iframe, frame");
+        for (var i = 0; i &lt; frames.length; i++) {
+            try {
+                var d = frames[i].contentDocument;
+                if (d &amp;&amp; out.indexOf(d) === -1) out.push(d);
+            } catch (e) { /* 跨域 iframe，跳过 */ }
+        }
+        return out;
+    }
+
+    function queryAll(docs, selector) {
+        var out = [];
+        for (var i = 0; i &lt; docs.length; i++) {
+            try { out = out.concat(toArray(docs[i].querySelectorAll(selector))); } catch (e) {}
+        }
+        return out;
+    }
+
+    /* ---------- 找试卷数据 window.view ---------- */
+    function findView() {
+        var wins = [window];
+        try {
+            for (var i = 0; i &lt; window.frames.length; i++) wins.push(window.frames[i]);
+        } catch (e) {}
+        for (var j = 0; j &lt; wins.length; j++) {
+            try {
+                var w = wins[j];
+                if (w &amp;&amp; w.view &amp;&amp; typeof w.view.NewContentXml === "function") return w.view;
+            } catch (e) {}
+        }
+        return null;
+    }
+
+    function parseQuestions(xml) {
+        var doc = new DOMParser().parseFromString(xml, "text/xml");
+        if (doc.querySelector("parsererror")) return [];
+        var nodes = toArray(doc.querySelectorAll("Question"));
+        var out = [];
+        for (var i = 0; i &lt; nodes.length; i++) {
+            var idNode = nodes[i].querySelector("QuestionID");
+            var ansNode = nodes[i].querySelector("StdAnswer");
+            if (!idNode || !ansNode) continue;
+            out.push({
+                type: (nodes[i].getAttribute("Type") || "").toUpperCase(),
+                id: (idNode.textContent || "").trim(),
+                answer: (ansNode.textContent || "").trim()
+            });
+        }
+        return out;
+    }
+
+    /* ---------- 各题型填充 ---------- */
+    function fillSS(docs, q) {
+        var list = queryAll(docs, 'input[type="radio"][name="ss' + q.id + '"]');
+        for (var i = 0; i &lt; list.length; i++) {
+            if (sameText(list[i].value, q.answer)) { list[i].click(); return 1; }
+        }
+        return 0;
+    }
+
+    function fillMS(docs, q) {
+        var letters = String(q.answer).match(/[A-Za-z]/g) || [];
+        var list = queryAll(docs, 'input[type="checkbox"]');
+        var hit = 0;
+        for (var i = 0; i &lt; letters.length; i++) {
+            var ch = letters[i].toUpperCase();
+            for (var j = 0; j &lt; list.length; j++) {
+                var el = list[j];
+                var id = el.id || "";
+                var name = el.name || "";
+                if (id === "ms" + q.id + "_" + ch ||
+                    name === "ms" + q.id + "_" + ch ||
+                    (id.indexOf(q.id) !== -1 &amp;&amp; id.slice(-1).toUpperCase() === ch)) {
+                    if (!el.checked) el.click();
+                    hit++;
+                    break;
+                }
+            }
+        }
+        return hit;
+    }
+
+    function fillTF(docs, q) {
+        var yes = /^\s*(正确|对|是|true|t|√|1|a)\s*$/i.test(q.answer);
+        var want = yes
+            ? ["T", "A", "1", "true", "正确", "对"]
+            : ["F", "B", "0", "false", "错误", "错"];
+        var list = queryAll(docs, 'input[type="radio"][name="tf' + q.id + '"]');
+        for (var i = 0; i &lt; want.length; i++) {
+            for (var j = 0; j &lt; list.length; j++) {
+                if (sameText(list[j].value, want[i])) { list[j].click(); return 1; }
+            }
+        }
+        return 0;
+    }
+
+    function applySelect(sel, value) {
+        sel.value = value;
+        sel.dispatchEvent(new Event("change", { bubbles: true }));
+        return 1;
+    }
+    function setSelect(sel, want) {
+        var opts = toArray(sel.options);
+        var i;
+        for (i = 0; i &lt; opts.length; i++) {
+            if (sameText(opts[i].value, want)) return applySelect(sel, opts[i].value);
+        }
+        for (i = 0; i &lt; opts.length; i++) {
+            if (sameText(opts[i].textContent, want)) return applySelect(sel, opts[i].value);
+        }
+        return 0;
+    }
+
+    function fillBL(docs, q) {
+        var sels = queryAll(docs, 'select[id^="bl' + q.id + '_"]');
+        if (!sels.length) return 0;
+        sels.sort(function (a, b) { return tailNumber(a.id) - tailNumber(b.id); });
+        var parts = q.answer.split(/[;；]/);
+        if (parts.length &lt; sels.length) parts = q.answer.split(/[,，、]/);
+        parts = parts.map(function (x) { return x.trim(); }).filter(Boolean);
+        var hit = 0;
+        for (var i = 0; i &lt; sels.length &amp;&amp; i &lt; parts.length; i++) {
+            hit += setSelect(sels[i], parts[i]);
+        }
+        return hit;
+    }
+
+    function fillSK(docs, q) {
+        var list = queryAll(docs, "textarea");
+        for (var i = 0; i &lt; list.length; i++) {
+            var key = (list[i].id || "") + " " + (list[i].name || "") + " " + (list[i].className || "");
+            if (key.indexOf(q.id) !== -1) {
+                list[i].value = q.answer;
+                list[i].dispatchEvent(new Event("input", { bubbles: true }));
+                list[i].dispatchEvent(new Event("change", { bubbles: true }));
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    /* ---------- 主流程 ---------- */
+    function run() {
+        var view = findView();
+        if (!view) { log("还没找到试卷数据 window.view，等一会儿再试…"); return false; }
+
+        var xml = "";
+        try { xml = view.NewContentXml() || ""; } catch (e) { log("NewContentXml() 报错：", e); return false; }
+        if (!xml) { log("试卷 XML 还是空的，等一会儿再试…"); return false; }
+
+        var questions = parseQuestions(xml);
+        if (!questions.length) { log("试卷 XML 里还没解析出题目，等一会儿再试…"); return false; }
+
+        var docs = documents();
+        var ok = { SS: 0, MS: 0, TF: 0, BL: 0, SK: 0 };
+        var missed = [];
+
+        for (var i = 0; i &lt; questions.length; i++) {
+            var q = questions[i];
+            var n = 0;
+            if (q.type === "SS") n = fillSS(docs, q);
+            else if (q.type === "MS") n = fillMS(docs, q);
+            else if (q.type === "TF") n = fillTF(docs, q);
+            else if (q.type === "BL") n = fillBL(docs, q);
+            else if (q.type === "SK") n = fillSK(docs, q);
+            else { missed.push(q.id + " 题型 " + q.type + " 暂不支持"); continue; }
+            if (n > 0) ok[q.type]++; else missed.push(q.id + "（" + q.type + "）没匹配上");
+        }
+
+        log("共 " + questions.length + " 题，填充情况：", ok);
+        if (missed.length) log("这些题没填上：", missed);
+        return true;
+    }
+
+    function submit() {
+        var fn = null;
+        try { if (typeof window.SubmitExam === "function") fn = window.SubmitExam.bind(window); } catch (e) {}
+        for (var i = 0; !fn &amp;&amp; i &lt; window.frames.length; i++) {
+            try {
+                var w = window.frames[i];
+                if (typeof w.SubmitExam === "function") fn = w.SubmitExam.bind(w);
+            } catch (e) {}
+        }
+        if (!fn) { log("没找到 SubmitExam()，请自己点页面上的提交按钮。"); return; }
+        log("正在提交…");
+        try { fn(); } catch (e) { log("提交出错：", e); }
+    }
+
+    function finish() {
+        if (!SUBMIT) { log("已跳过自动提交（SUBMIT = false），请自己点提交。"); return; }
+        setTimeout(submit, 400);
+    }
+
+    function addButton() {
+        if (document.getElementById("__plp_btn__")) return;
+        if (!document.body) return;
+        var btn = document.createElement("button");
+        btn.id = "__plp_btn__";
+        btn.type = "button";
+        btn.textContent = "一键答题" + (SUBMIT ? "并提交" : "（不提交）");
+        btn.style.cssText = "position:fixed;right:24px;bottom:24px;z-index:99999;padding:10px 14px;" +
+            "background:#0f8bfd;color:#fff;border:none;border-radius:6px;cursor:pointer;" +
+            "font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.25)";
+        btn.addEventListener("click", function () { if (run()) finish(); });
+        document.body.appendChild(btn);
+    }
+
+    /* ---------- 启动 ---------- */
+    var tries = 0;
+    var timer = null;
+
+    function attempt() {
+        if (run()) {
+            if (timer) clearInterval(timer);
+            finish();
+            return true;
+        }
+        return false;
+    }
+
+    window.__PLP__ = { run: run, fill: run, submit: submit };
+
+    addButton();
+    timer = setInterval(function () {
+        tries++;
+        if (!attempt() &amp;&amp; tries >= MAX_RETRY) {
+            clearInterval(timer);
+            log("等了 " + MAX_RETRY + " 秒还是没拿到题目，已停止。请确认：1) 页面已经进入试卷 2) 换个 frame 再试一次。");
+        }
+    }, RETRY_MS);
+    attempt();
+})();</textarea>
+  </div>
+
+  <div class="card">
+    <h2>怎么知道成功了</h2>
+    <p>按 <code>F12</code> → <code>Console</code>，会看到以 <code>[大物预习]</code> 开头的日志：</p>
+    <pre>[大物预习] 共 8 题，填充情况： {SS: 5, MS: 1, TF: 2, BL: 0, SK: 0}</pre>
+    <div class="good"><b>看到这行</b> = 已经填好了，页面上能直接看到选项被选中。</div>
+    <div class="bad"><b>看到</b> <code>这些题没填上：[...]</code>
+      = 脚本和你们这套系统的页面结构对不上。<b>先别提交</b>，把那行日志发给脚本作者改一下。</div>
+  </div>
+
+  <div class="card">
+    <h2>常见问题</h2>
+
+    <details open>
+      <summary>点了没反应 / 什么都没发生？</summary>
+      <p>按顺序排查：</p>
+      <ul>
+        <li><b>是不是在校园网里？</b>页面地址是 <code>172.31.80.14</code>，这是校内地址，回家或断 VPN 就打不开。</li>
+        <li><b>题目显示出来了吗？</b>太早点按钮会拿不到数据，等题目全部出现再点，脚本自己也会每秒重试 20 次。</li>
+        <li><b>试卷是不是在 iframe 里？</b>个别部署会这样。按 F12，看左上角 <code>top</code> 那个下拉框，切成子 frame 再执行一次。</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>会不会填错 / 把提交次数用完？</summary>
+      <p>标准答案是从页面自己下发的试卷数据里读的，正常情况就是官方答案。
+      但这套系统一般只有 <b>3 次提交机会</b>，所以建议第一次先用「只填答案」那个书签，
+      自己扫一眼确认没问题，再手动点提交。</p>
+    </details>
+
+    <details>
+      <summary>手机上能用吗？</summary>
+      <p>不行。书签栏拖拽和 F12 控制台都是桌面浏览器的功能，请用电脑操作。
+      手机浏览器一般也不让你运行这种脚本。</p>
+    </details>
+
+    <details>
+      <summary>支持哪些题型？</summary>
+      <p>单选（SS）、多选（MS）、判断（TF）、下拉填空（BL）、简答/填空（SK）。
+      如果日志里出现「题型 XX 暂不支持」，把那行发给作者补上。</p>
+    </details>
+
+    <details>
+      <summary>为什么地址和题型代号是这些？</summary>
+      <p>这类预习系统由「科大奥锐」提供，页面里有个 <code>view.NewContentXml()</code> 方法会返回整份试卷的 XML，
+      里面每个 <code>Question</code> 都带着 <code>Type</code> 和 <code>StdAnswer</code>。
+      脚本就是读它，再按题型把答案写回页面控件。</p>
+    </details>
+  </div>
+
+</div>
+
+<footer>
+  仅供个人学习交流使用 · 请遵守学校关于实验教学的有关规定<br>
+  <a href="https://github.com/c2451134117-cyber/physics-lab-preexam" target="_blank" rel="noopener">GitHub 仓库</a>
+</footer>
+
+<script>
+(function () {
+  var show = function (id) {
+    var box = document.getElementById(id);
+    box.style.display = 'block';
+    box.style.height = Math.min(box.scrollHeight + 20, 400) + 'px';
+    return box;
+  };
+
+  document.addEventListener('click', function (ev) {
+    var btn = ev.target.closest ? ev.target.closest('[data-copy]') : null;
+    if (!btn) return;
+    var box = show(btn.getAttribute('data-copy'));
+    box.select();
+    box.setSelectionRange(0, box.value.length);
+    var done = function () {
+      btn.textContent = '已复制 ✓';
+      setTimeout(function () {
+        btn.textContent = btn.getAttribute('data-copy') === 'codeConsole'
+          ? '复制控制台代码' : '复制书签代码';
+      }, 2000);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(box.value).then(done).catch(function () { legacy(); });
+    } else {
+      legacy();
+    }
+    function legacy() {
+      try { document.execCommand('copy'); done(); }
+      catch (e) { btn.textContent = '复制失败，请手动全选上面的框'; }
+    }
+  });
+})();
+</script>
+</body>
+</html>
